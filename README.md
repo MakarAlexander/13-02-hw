@@ -33,8 +33,56 @@ sudo adduser --encrypt-home   cryptouser
 *В качестве ответа пришлите снимки экрана с поэтапным выполнением задания.*
 
 #### Решение
+Устанавливаем gparted cryptsetup (LUKS)
+```
+apt install gparted cryptsetup
+```
+![1-3](./13-02-3.png)
 
+Добавляем через Virtual Box диск на 100 MiB
 
+Подготавливаем раздел (тип luks2)
+```
+sudo cryptsetup -y -v --type luks2 luksFormat /dev/sdb
+```
+
+![1-4](./13-02-4.png)
+
+Открываем устройство /dev/sdb и задаем ему имя cryptodisk
+```
+sudo cryptsetup luksOpen /dev/sdb cryptodisk
+```
+
+![1-5](./13-02-5.png)
+
+Форматируем раздел
+```
+sudo dd if=/dev/zero of=/dev/mapper/cryptodisk
+```
+
+```
+sudo mkfs.ext4 /dev/mapper/cryptodisk
+```
+
+![1-6](./13-02-6.png)
+
+Монтируем открытый раздел
+```
+mkdir .secret
+```
+
+```
+sudo mount /dev/mapper/cryptodisk .secret/
+```
+
+Завершение работы
+```
+sudo umount .secret
+```
+
+```
+sudo cryptsetup luksClose cryptodisk
+```
 
 ## Дополнительные задания (со звёздочкой*)
 
@@ -48,3 +96,10 @@ sudo adduser --encrypt-home   cryptouser
 
 
 *В качестве ответа пришлите снимки экрана с поэтапным выполнением задания.*
+
+
+ecryptfs-unwrap-passphrase
+Passphrase:
+``` 
+9359732699a6164aeb3b82bd1802127c
+```
